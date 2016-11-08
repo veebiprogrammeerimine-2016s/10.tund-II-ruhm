@@ -15,10 +15,10 @@ class Car {
 		$stmt = $this->connection->prepare("UPDATE cars_and_colors SET deleted=NOW() WHERE id=? AND deleted IS NULL");
 		$stmt->bind_param("i",$id);
 		
-		// kas õnnestus salvestada
+		// kas Ãµnnestus salvestada
 		if($stmt->execute()){
-			// õnnestus
-			echo "kustutamine õnnestus!";
+			// Ãµnnestus
+			echo "kustutamine Ãµnnestus!";
 		}
 		
 		$stmt->close();
@@ -26,7 +26,22 @@ class Car {
 		
 	}
 		
-	function get($q) {
+	function get($q, $sort, $direction) {
+		
+		//mis sort ja jÃ¤rjekord
+		$allowedSortOptions = ["id", "plate", "color"];
+		//kas sort on lubatud valikute sees
+		if(!in_array($sort, $allowedSortOptions)){
+			$sort = "id";
+		}
+		echo "Sorteerin: ".$sort." ";
+		
+		//turvaliselt luban ainult 2 valikut
+		$orderBy= "ASC";
+		if($direction == "descending"){
+			$orderBy= "DESC";
+		}
+		echo "JÃ¤rjekord: ".$orderBy." ";
 		
 		if($q == ""){
 		
@@ -35,15 +50,16 @@ class Car {
 			$stmt = $this->connection->prepare("
 				SELECT id, plate, color
 				FROM cars_and_colors
-				WHERE deleted IS NULL
+				WHERE deleted IS NULL 
+				ORDER BY $sort $orderBy
 			");
-		
+			echo $this->connection->error;
 		}else{
 			
 			echo "Otsib: ".$q;
 			
-			//teen otsisõna
-			// lisan mõlemale poole %
+			//teen otsisÃµna
+			// lisan mÃµlemale poole %
 			$searchword = "%".$q."%";
 			
 			$stmt = $this->connection->prepare("
@@ -51,6 +67,7 @@ class Car {
 				FROM cars_and_colors
 				WHERE deleted IS NULL AND
 				(plate LIKE ? OR color LIKE ?)
+				ORDER BY $sort $orderBy
 			");
 			$stmt->bind_param("ss", $searchword, $searchword);
 		
@@ -79,7 +96,7 @@ class Car {
 			$car->carColor = $color;
 			
 			//echo $plate."<br>";
-			// iga kord massiivi lisan juurde nr märgi
+			// iga kord massiivi lisan juurde nr mÃ¤rgi
 			array_push($result, $car);
 		}
 		
@@ -100,7 +117,7 @@ class Car {
 		//tekitan objekti
 		$car = new Stdclass();
 		
-		//saime ühe rea andmeid
+		//saime Ã¼he rea andmeid
 		if($stmt->fetch()){
 			// saan siin alles kasutada bind_result muutujaid
 			$car->plate = $plate;
@@ -108,9 +125,9 @@ class Car {
 			
 			
 		}else{
-			// ei saanud rida andmeid kätte
+			// ei saanud rida andmeid kÃ¤tte
 			// sellist id'd ei ole olemas
-			// see rida võib olla kustutatud
+			// see rida vÃµib olla kustutatud
 			header("Location: data.php");
 			exit();
 		}
@@ -131,7 +148,7 @@ class Car {
 		$stmt->bind_param("ss", $plate, $color);
 		
 		if($stmt->execute()) {
-			echo "salvestamine õnnestus";
+			echo "salvestamine Ãµnnestus";
 		} else {
 		 	echo "ERROR ".$stmt->error;
 		}
@@ -146,10 +163,10 @@ class Car {
 		$stmt = $this->connection->prepare("UPDATE cars_and_colors SET plate=?, color=? WHERE id=? AND deleted IS NULL");
 		$stmt->bind_param("ssi",$plate, $color, $id);
 		
-		// kas õnnestus salvestada
+		// kas Ãµnnestus salvestada
 		if($stmt->execute()){
-			// õnnestus
-			echo "salvestus õnnestus!";
+			// Ãµnnestus
+			echo "salvestus Ãµnnestus!";
 		}
 		
 		$stmt->close();

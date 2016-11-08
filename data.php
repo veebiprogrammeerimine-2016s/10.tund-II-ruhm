@@ -41,17 +41,26 @@
 		
 	}
 	
+	// sorteerib
+	if(isset($_GET["sort"]) && isset($_GET["direction"])){
+		$sort = $_GET["sort"];
+		$direction = $_GET["direction"];
+	}else{
+		// kui ei ole määratud siis vaikimis id ja ASC
+		$sort = "id";
+		$direction = "ascending";
+	}
 	
 	//kas otsib
 	if(isset($_GET["q"])){
 		
 		$q = $Helper->cleanInput($_GET["q"]);
 		
-		$carData = $Car->get($q);
+		$carData = $Car->get($q, $sort, $direction);
 	
 	} else {
 		$q = "";
-		$carData = $Car->get($q);
+		$carData = $Car->get($q, $sort, $direction);
 	
 	}
 	
@@ -86,18 +95,37 @@
 <h2>Autod</h2>
 
 <form>
-	<input type="search" name="q">
+	<input type="search" name="q" value="<?=$q;?>">
 	<input type="submit" value="Otsi">
 </form>
 
 <?php 
 	
+	$direction = "ascending";
+	if (isset($_GET["direction"])){
+		if ($_GET["direction"] == "ascending"){
+			$direction = "descending";
+		}
+	}
+	
 	$html = "<table>";
 	
 	$html .= "<tr>";
-		$html .= "<th>id</th>";
-		$html .= "<th>plate</th>";
-		$html .= "<th>color</th>";
+		$html .= "<th>
+					<a href='?q=".$q."&sort=id&direction=".$direction."'>
+						id
+					</a>
+				</th>";
+		$html .= "<th>
+					<a href='?q=".$q."&sort=plate&direction=".$direction."'>
+						plate
+					</a>
+				</th>";
+		$html .= "<th>
+					<a href='?q=".$q."&sort=color&direction=".$direction."'>
+						color
+					</a>
+				</th>";
 	$html .= "</tr>";
 	
 	//iga liikme kohta massiivis
