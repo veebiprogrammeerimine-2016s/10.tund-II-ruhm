@@ -26,13 +26,38 @@ class Car {
 		
 	}
 		
-	function get() {
+	function get($q) {
+		
+		if($q == ""){
+		
+			echo "ei otsi";
+			
+			$stmt = $this->connection->prepare("
+				SELECT id, plate, color
+				FROM cars_and_colors
+				WHERE deleted IS NULL
+			");
+		
+		}else{
+			
+			echo "Otsib: ".$q;
+			
+			//teen otsisõna
+			// lisan mõlemale poole %
+			$searchword = "%".$q."%";
+			
+			$stmt = $this->connection->prepare("
+				SELECT id, plate, color
+				FROM cars_and_colors
+				WHERE deleted IS NULL AND
+				(plate LIKE ? OR color LIKE ?)
+			");
+			$stmt->bind_param("ss", $searchword, $searchword);
+		
+		}
+				
 
-		$stmt = $this->connection->prepare("
-			SELECT id, plate, color
-			FROM cars_and_colors
-			WHERE deleted IS NULL
-		");
+		
 		echo $this->connection->error;
 		
 		$stmt->bind_result($id, $plate, $color);

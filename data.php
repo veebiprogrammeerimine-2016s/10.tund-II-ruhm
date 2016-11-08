@@ -41,11 +41,23 @@
 		
 	}
 	
-	//saan kõik auto andmed
-	$carData = $Car->get();
-	//echo "<pre>";
-	//var_dump($carData);
-	//echo "</pre>";
+	
+	//kas otsib
+	if(isset($_GET["q"])){
+		
+		$q = $Helper->cleanInput($_GET["q"]);
+		
+		$carData = $Car->get($q);
+	
+	} else {
+		$q = "";
+		$carData = $Car->get($q);
+	
+	}
+	
+	
+	
+	
 ?>
 <h1>Data</h1>
 <?=$msg;?>
@@ -72,6 +84,12 @@
 </form>
 
 <h2>Autod</h2>
+
+<form>
+	<input type="search" name="q">
+	<input type="submit" value="Otsi">
+</form>
+
 <?php 
 	
 	$html = "<table>";
