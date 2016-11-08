@@ -1,6 +1,6 @@
 <?php
-
-	require("../../../config.php");
+	
+	require("/home/romil/config.php");
 
 	/* ALUSTAN SESSIOONI */
 	session_start();
@@ -11,7 +11,7 @@
 	
 	/* KLASSID */
 	
-	require("Helper.class.php");
+	require("class/Helper.class.php");
 	$Helper = new Helper();
 
 ?>
